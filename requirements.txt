@@ -1,0 +1,5 @@
+openai~=0.27.2
+python-dotenv~=1.0.0
+pandas~=1.5.3
+pm4py~=2.7.0
+tiktoken~=0.3.3

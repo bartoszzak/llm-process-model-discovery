@@ -1,0 +1,33 @@
+{
+  "task": {
+    "business rule": {
+      "name": "Business rule task type",
+      "description": "Business rules, added with BPMN 2.0, are specific types of services maintained by a business group, rather than an IT group. The rule shape is used to represent the implementation of a business rule."
+    },
+    "manual task": {
+      "name": "Manual task type",
+      "description": "A manual task type is used whenever an activity must be executed manually. It can be executed without any outside help or application (e.g. loading a truck with product)."
+    },
+    "receive task": {
+      "name": "Receive task type",
+      "description": "A receive task indicates that the process is relying on an incoming message from a third party. Upon receiving a message, the task has been performed."
+    },
+    "script task": {
+      "name": "Script task type",
+      "description": "Script tasks are executed by a business process engine. The script is written in a language that the engine can parse, which, in many instances, is JavaScript."
+    },
+    "send task": {
+      "name": "Send task type",
+      "description": "A send task sends a message to another process or lane. The task is completed once the message is sent."
+    },
+    "service task": {
+      "name": "Service task type",
+      "description": "A service task is any task that uses an automated application or web service to complete the task."
+    },
+    "user task": {
+      "name": "User task type",
+      "description": "The user task type indicates that the task is being performed by a person and cannot be easily broken down into simpler tasks."
+    }
+  },
+  "event": ["Timer", "Conditional", "Link", "Signal", "Error", "Escalation", "Termination", "Compensation", "Cancel", "Multiple", "Multiple Parallel"]
+}
