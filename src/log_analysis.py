@@ -1,8 +1,11 @@
+import os
 import re
 import json
+from dotenv import load_dotenv
 
 import pandas as pd
 import openai
+import pm4py
 
 import prompt_generation
 
@@ -76,5 +79,22 @@ def __get_unique_logs_by_name(logs: pd.DataFrame) -> str:
 
 
 if __name__ == '__main__':
-    logs = pd.read_pickle("../data/pickled_logs/CCC19 - Log XES.pickle")
-    print(__get_unique_logs_by_name(logs))
+    load_dotenv()
+    openai.api_key = os.getenv("OPENAI_API_KEY")
+
+    # logs = pm4py.read_xes('../data/logs/Hospital Billing - Event Log.xes')
+    # logs.to_pickle('../data/pickled_logs/Hospital Billing - Event Log.pickle')
+    logs: pd.DataFrame = pd.read_pickle('../data/pickled_logs/Hospital Billing - Event Log.pickle')
+    process_model = pm4py.discover_bpmn_inductive(logs)
+    pm4py.write_bpmn(process_model, '../data/hospital_billing')
+
+    unique_obj_names = logs['concept:name'].unique()
+    renamed = rename_bpmn_objects(unique_obj_names)
+    new_names = list(renamed.values())
+    classified_objects = distinguish_tasks_events(str(new_names))
+    print(classified_objects)
+    object_types = determine_object_types(str(classified_objects))
+    print(object_types)
+    bpmn_objects = convert_to_bpmn_format(str(object_types))
+    print(bpmn_objects)
+
