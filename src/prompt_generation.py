@@ -17,7 +17,7 @@ def generate_task_events_prompt(logs: list or str) -> str:
 def generate_types_prompt(tasks_and_events: dict or str) -> str:
     task_types = ''
 
-    with open("bpmn_types.json") as f:
+    with open("../data/bpmn_types.json") as f:
         bpmn_types = json.load(f)
     tasks = bpmn_types['task']
     events = bpmn_types['event']
