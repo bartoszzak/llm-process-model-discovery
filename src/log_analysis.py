@@ -8,6 +8,7 @@ import openai
 import pm4py
 
 import prompt_generation
+import xml_parser
 
 
 def rename_bpmn_objects(object_names: str) -> dict:
@@ -82,12 +83,11 @@ if __name__ == '__main__':
     load_dotenv()
     openai.api_key = os.getenv("OPENAI_API_KEY")
 
-    # logs = pm4py.read_xes('../data/logs/Hospital Billing - Event Log.xes')
-    # logs.to_pickle('../data/pickled_logs/Hospital Billing - Event Log.pickle')
-    logs: pd.DataFrame = pd.read_pickle('../data/pickled_logs/Hospital Billing - Event Log.pickle')
+    #logs = pm4py.read_xes('../data/logs/BPI_Challenge 2017.xes')
+    #logs.to_pickle('../data/pickled_logs/BPI_Challenge 2017.pickle')
+    logs: pd.DataFrame = pd.read_pickle('../data/pickled_logs/BPI_Challenge 2017.pickle')
     process_model = pm4py.discover_bpmn_inductive(logs)
-    pm4py.write_bpmn(process_model, '../data/hospital_billing')
-
+    pm4py.write_bpmn(process_model, '../data/model')
     unique_obj_names = logs['concept:name'].unique()
     renamed = rename_bpmn_objects(unique_obj_names)
     new_names = list(renamed.values())
@@ -97,4 +97,4 @@ if __name__ == '__main__':
     print(object_types)
     bpmn_objects = convert_to_bpmn_format(str(object_types))
     print(bpmn_objects)
-
+    xml_parser.replace_task_names('../data/model.bpmn', renamed, bpmn_objects)
