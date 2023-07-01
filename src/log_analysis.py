@@ -2,13 +2,20 @@ import os
 import re
 import json
 from dotenv import load_dotenv
+import logging
 
 import pandas as pd
 import openai
 import pm4py
 
-import prompt_generation
-import xml_parser
+from src import prompt_generation
+
+logger = logging.getLogger(__name__)
+handler = logging.StreamHandler()
+logger.addHandler(handler)
+FORMAT = "[%(filename)s:%(lineno)s - %(funcName)20s() ] %(message)s"
+logging.basicConfig(format=FORMAT)
+logger.setLevel(logging.DEBUG)
 
 
 def rename_bpmn_objects(object_names: str) -> dict:
@@ -18,7 +25,11 @@ def rename_bpmn_objects(object_names: str) -> dict:
         messages=[{"role": "user", "content": f"{prompt}"}],
         temperature=0,
     )
-    renamed_elements = json.loads(response["choices"][0]["message"]["content"].replace('\'', '\"'))
+    response_message = response["choices"][0]["message"]["content"]
+    response_message = response_message.replace('\'', '\"')
+    logging.warning(response_message)
+
+    renamed_elements = json.loads(response_message)
 
     return renamed_elements
 
@@ -31,20 +42,33 @@ def distinguish_tasks_events(object_names: str) -> dict:
         temperature=0,
     )
 
-    classified_objects = json.loads(response["choices"][0]["message"]["content"].replace('\'', '\"'))
+    response_message = response["choices"][0]["message"]["content"]
+    response_message = response_message.replace('\'', '\"')
+    logging.warning(response_message)
+    extracted_dicts = __extract_dicts_from_str(response_message.replace('\'', '\"'))
+    if len(extracted_dicts) > 1:
+        logging.warning("More than 1 dict found in output! Taking the first one.")
+    classified_objects = extracted_dicts[0]
 
     return classified_objects
 
 
 def determine_object_types(bpmn_objects: str) -> dict:
-    prompt = prompt_generation.generate_types_prompt(bpmn_objects)
+    # prompt = prompt_generation.generate_types_prompt(bpmn_objects)
+    prompt = prompt_generation.generate_types_prompt_no_description(bpmn_objects)
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": f"{prompt}"}],
         temperature=0,
     )
 
-    object_types = json.loads(response["choices"][0]["message"]["content"].replace('\'', '\"'))
+    response_message = response["choices"][0]["message"]["content"]
+    response_message = response_message.replace('\'', '\"')
+    logging.warning(response_message)
+    extracted_dicts = __extract_dicts_from_str(response_message.replace('\'', '\"'))
+    if len(extracted_dicts) > 1:
+        logging.warning("More than 1 dict found in output! Taking the first one.")
+    object_types = extracted_dicts[0]
 
     return object_types
 
@@ -57,7 +81,13 @@ def convert_to_bpmn_format(object_types: str) -> dict:
         temperature=0,
     )
 
-    bpmn_object_types = json.loads(response["choices"][0]["message"]["content"].replace('\'', '\"'))
+    response_message = response["choices"][0]["message"]["content"]
+    response_message = response_message.replace('\'', '\"')
+    logging.warning(response_message)
+    extracted_dicts = __extract_dicts_from_str(response_message.replace('\'', '\"'))
+    if len(extracted_dicts) > 1:
+        logging.warning("More than 1 dict found in output! Taking the first one.")
+    bpmn_object_types = extracted_dicts[0]
 
     return bpmn_object_types
 
@@ -79,22 +109,13 @@ def __get_unique_logs_by_name(logs: pd.DataFrame) -> str:
     return unique_logs_str
 
 
-if __name__ == '__main__':
-    load_dotenv()
-    openai.api_key = os.getenv("OPENAI_API_KEY")
-
-    #logs = pm4py.read_xes('../data/logs/BPI_Challenge 2017.xes')
-    #logs.to_pickle('../data/pickled_logs/BPI_Challenge 2017.pickle')
-    logs: pd.DataFrame = pd.read_pickle('../data/pickled_logs/BPI_Challenge 2017.pickle')
-    process_model = pm4py.discover_bpmn_inductive(logs)
-    pm4py.write_bpmn(process_model, '../data/model')
-    unique_obj_names = logs['concept:name'].unique()
-    renamed = rename_bpmn_objects(unique_obj_names)
-    new_names = list(renamed.values())
-    classified_objects = distinguish_tasks_events(str(new_names))
-    print(classified_objects)
-    object_types = determine_object_types(str(classified_objects))
-    print(object_types)
-    bpmn_objects = convert_to_bpmn_format(str(object_types))
-    print(bpmn_objects)
-    xml_parser.replace_task_names('../data/model.bpmn', renamed, bpmn_objects)
+def __extract_dicts_from_str(s: str) -> list:
+    results = []
+    s_ = ' '.join(s.split('\n')).strip()
+    exp = re.compile(r'(\{[^{}]+})')
+    for i in exp.findall(s_):
+        try:
+            results.append(json.loads(i))
+        except json.JSONDecodeError as e:
+            print(e)
+    return results
