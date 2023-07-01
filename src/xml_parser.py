@@ -18,20 +18,16 @@ def change_task_type(task, child_tag) -> str:
     return '}'.join(tag_tokens)
 
 
-def replace_task_names(path: str, names_dict, task_type_dict):
-    tree = ET.parse(path)
+def replace_task_names(input_path: str, output_path: str, names_dict, task_type_dict):
+    tree = ET.parse(input_path)
     root = tree.getroot()
     for child in root:
         if child.tag.split('}')[1] == 'process':
             for process_child in child:
                 if process_child.tag.split('}')[1] == 'task':
-                    task_name = process_child.attrib['name']
+                    task_name = process_child.attrib['name'].strip()
                     new_name = names_dict[task_name]
-                    process_child.tag = change_task_type(task_type_dict[new_name].split(':')[1], process_child.tag)
+                    process_child.tag = change_task_type(task_type_dict[new_name], process_child.tag)
                     process_child.attrib['name'] = new_name
-
-    tree.write('../data/model_changed.bpmn')
-    fix_bpmn_format('../data/model_changed.bpmn')
-
-
-
+    tree.write(output_path)
+    fix_bpmn_format(output_path)
