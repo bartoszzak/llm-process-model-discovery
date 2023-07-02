@@ -17,9 +17,9 @@ if __name__ == '__main__':
     openai.api_key = os.getenv("OPENAI_API_KEY")
 
     # read logs from xes
-    # logs = pm4py.read_xes('data/logs/ApacheCommons-Crypto-1.0.0-StreamCbcNopad-splitted.xes')
-    # logs.to_pickle('data/pickled_logs/ApacheCommons-Crypto-1.0.0-StreamCbcNopad-splitted.pickle')
-    logs: pd.DataFrame = pd.read_pickle('data/pickled_logs/BPI_Challenge_2012.pickle')
+#    logs = pm4py.read_xes('data/logs/BPI_Challenge 2017.xes')
+#    logs.to_pickle('data/pickled_logs/BPI_Challenge 2017.pickle')
+    logs: pd.DataFrame = pd.read_pickle('data/pickled_logs/BPI_Challenge 2017.pickle')
 
     # generate initial process model
     process_model = pm4py.discover_bpmn_inductive(logs)
@@ -32,13 +32,13 @@ if __name__ == '__main__':
 
     # classify objects
     classified_objects = distinguish_tasks_events(str(new_names))
-    print(classified_objects)
+    # print(classified_objects)
     object_types = determine_object_types(str(classified_objects))
-    print(object_types)
+    # print(object_types)
 
     # convert to actual BPMN format names
     bpmn_objects = convert_to_bpmn_format(str(object_types))
-    print(bpmn_objects)
+    # print(bpmn_objects)
 
     enhanced_bpmn_path = 'data/model_changed.bpmn'
     xml_parser.replace_task_names('data/model.bpmn', enhanced_bpmn_path, renamed, bpmn_objects)
