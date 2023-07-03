@@ -1,12 +1,9 @@
-import os
-import re
 import json
-from dotenv import load_dotenv
 import logging
+import re
 
-import pandas as pd
 import openai
-import pm4py
+import pandas as pd
 
 from src import prompt_generation
 
@@ -27,7 +24,7 @@ def rename_bpmn_objects(object_names: str) -> dict:
     )
     response_message = response["choices"][0]["message"]["content"]
     response_message = response_message.replace('\'', '\"')
-    logging.warning(response_message)
+    logging.debug(response_message)
 
     renamed_elements = json.loads(response_message)
 
@@ -44,7 +41,7 @@ def distinguish_tasks_events(object_names: str) -> dict:
 
     response_message = response["choices"][0]["message"]["content"]
     response_message = response_message.replace('\'', '\"')
-    logging.warning(response_message)
+    logging.debug(response_message)
     extracted_dicts = __extract_dicts_from_str(response_message.replace('\'', '\"'))
     if len(extracted_dicts) > 1:
         logging.warning("More than 1 dict found in output! Taking the first one.")
@@ -53,9 +50,14 @@ def distinguish_tasks_events(object_names: str) -> dict:
     return classified_objects
 
 
-def determine_object_types(bpmn_objects: str) -> dict:
-    # prompt = prompt_generation.generate_types_prompt(bpmn_objects)
-    prompt = prompt_generation.generate_types_prompt_no_description(bpmn_objects)
+def determine_object_types(bpmn_objects: list[str], obj_name: str) -> dict:
+    if obj_name == 'task':
+        prompt = prompt_generation.generate_task_types_prompt(bpmn_objects)
+    elif obj_name == 'event':
+        prompt = prompt_generation.generate_event_types_prompt(bpmn_objects)
+    else:
+        raise ValueError("Wrong object name.")
+
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": f"{prompt}"}],
@@ -64,7 +66,7 @@ def determine_object_types(bpmn_objects: str) -> dict:
 
     response_message = response["choices"][0]["message"]["content"]
     response_message = response_message.replace('\'', '\"')
-    logging.warning(response_message)
+    logging.debug(response_message)
     extracted_dicts = __extract_dicts_from_str(response_message.replace('\'', '\"'))
     if len(extracted_dicts) > 1:
         logging.warning("More than 1 dict found in output! Taking the first one.")
@@ -83,7 +85,7 @@ def convert_to_bpmn_format(object_types: str) -> dict:
 
     response_message = response["choices"][0]["message"]["content"]
     response_message = response_message.replace('\'', '\"')
-    logging.warning(response_message)
+    logging.debug(response_message)
     extracted_dicts = __extract_dicts_from_str(response_message.replace('\'', '\"'))
     if len(extracted_dicts) > 1:
         logging.warning("More than 1 dict found in output! Taking the first one.")

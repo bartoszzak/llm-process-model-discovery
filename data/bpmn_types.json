@@ -30,53 +30,45 @@
     }
   },
   "event": {
-    "timer event": {
-      "name": "Timer event type",
-      "description": "A Timer event occurs based on a predefined time or after a specific duration has passed. It can be used to schedule activities or trigger process transitions at specified times."
+    "message intermediate catch": {
+        "name": "Message Intermediate Catch Event",
+        "description": "This event is used to wait for and capture an incoming message from an external source. It signifies that a message has been received and triggers the subsequent flow."
     },
-    "conditional event": {
-      "name": "Conditional event type",
-      "description": "A Conditional event is triggered when a predefined condition is met or when a particular data condition is satisfied. It allows for decision-making within a process based on specific criteria."
+    "message intermediate throw": {
+        "name": "Message Intermediate Throw Event",
+        "description": "This event is used to send a message to an external recipient. It indicates that a message is being thrown or sent from the process, potentially triggering a related process or participant."
     },
-    "link event": {
-      "name": "Link event type",
-      "description": "A Link event is used to connect different parts of a process that are in separate process diagrams. It enables the synchronization or communication between processes."
+    "timer intermediate catch": {
+        "name": "Timer Intermediate Catch Event",
+        "description": "This event represents a time-based trigger. It waits for a specific amount of time to elapse or for a specific date and time to occur before continuing the process flow."
     },
-    "signal event": {
-      "name": "Signal event type",
-      "description": "A Signal event represents the receipt or emission of a signal, which can be used to initiate or terminate activities within a process. It provides a mechanism for inter-process communication."
+    "escalation intermediate throw": {
+        "name": "Escalation Intermediate Throw Event",
+        "description": "This event is used to raise an escalation or notify higher-level authorities or systems about an exceptional condition or problem that requires attention or intervention."
     },
-    "error event": {
-      "name": "Error event type",
-      "description": "An Error event indicates the occurrence of an unexpected error during the execution of a process. It can be used to handle and manage errors, triggering appropriate error-handling activities or processes."
+    "conditional intermediate catch": {
+        "name": "Conditional Intermediate Catch Event",
+        "description": "This event waits for a specific condition to be met before proceeding with the process flow. It checks for a defined condition and continues only if the condition evaluates to true."
     },
-    "escalation event": {
-      "name": "Escalation event type",
-      "description": "An Escalation event represents the escalation of a situation or an issue within a process to a higher level of authority or management. It enables the handling of exceptional or critical scenarios."
+    "link intermediate catch": {
+        "name": "Link Intermediate Catch Event",
+        "description": "This event waits for the activation of a predefined link. It serves as a synchronization point that ensures the execution of multiple parallel activities before proceeding further."
     },
-    "termination event": {
-      "name": "Termination event type",
-      "description": "A Termination event signifies the premature termination of a process or a part of it. It indicates the abrupt completion of the process without further execution of subsequent activities."
+    "link intermediate throw": {
+        "name": "Link Intermediate Throw Event",
+        "description": "This event is used to trigger or activate a predefined link, allowing parallel activities or processes to proceed past the synchronization point."
     },
-    "compensation event": {
-      "name": "Compensation event type",
-      "description": "A Compensation event is used to handle the compensation or reversal of activities that were previously performed within a process. It allows for the correction of errors or the undoing of specific actions."
+    "compensation intermediate throw": {
+        "name": "Compensation Intermediate Throw Event",
+        "description": "This event is used to initiate a compensation process. It triggers a compensation activity to undo or reverse the effects of previously executed activities."
     },
-    "cancel event": {
-      "name": "Cancel event type",
-      "description": "A Cancel event is used to cancel or terminate an ongoing activity within a process. It can be triggered by external factors or conditions."
+    "signal intermediate catch": {
+        "name": "Signal Intermediate Catch Event",
+        "description": "This event waits for the occurrence of a specific signal. It represents a point in the process where it listens for a signal event, which can be sent from various sources or processes."
     },
-    "multiple event": {
-      "name": "Multiple event type",
-      "description": "A Multiple event represents multiple triggers or occurrences happening simultaneously within a process. It allows for the parallel initiation of multiple activities or processes."
-    },
-    "multiple parallel event": {
-      "name": "Multiple Parallel event type",
-      "description": "A Multiple Parallel event is similar to the Multiple event, but it specifically signifies the simultaneous and parallel occurrence of multiple events or triggers within a process."
-    },
-    "none event": {
-      "name": "None event type",
-      "description": "None event"
+    "signal intermediate throw": {
+        "name": "Signal Intermediate Throw Event",
+        "description": "This event is used to send a signal to notify other parts of the process or external entities about a particular event or condition. It triggers the listening processes to react accordingly."
     }
   }
 }

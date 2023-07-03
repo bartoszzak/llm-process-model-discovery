@@ -1,0 +1,53 @@
+{
+  "event": {
+    "Message Intermediate Catch Event": {
+      "event type": "intermediateCatchEvent",
+      "event definition": "messageEventDefinition"
+    },
+    "Message Intermediate Throw Event": {
+      "event type": "intermediateThrowEvent",
+      "event definition": "messageEventDefinition"
+    },
+    "Timer Intermediate Catch Event": {
+      "event type": "intermediateCatchEvent",
+      "event definition": "timerEventDefinition"
+    },
+    "Escalation Intermediate Throw Event": {
+      "event type": "intermediateThrowEvent",
+      "event definition": "escalationEventDefinition"
+    },
+    "Conditional Intermediate Catch Event": {
+      "event type": "intermediateCatchEvent",
+      "event definition": "conditionalEventDefinition"
+    },
+    "Link Intermediate Catch Event": {
+      "event type": "intermediateCatchEvent",
+      "event definition": "linkEventDefinition"
+    },
+    "Link Intermediate Throw Event": {
+      "event type": "intermediateThrowEvent",
+      "event definition": "linkEventDefinition"
+    },
+    "Compensation Intermediate Throw Event": {
+      "event type": "intermediateThrowEvent",
+      "event definition": "compensateEventDefinition"
+    },
+    "Signal Intermediate Catch Event": {
+      "event type": "intermediateCatchEvent",
+      "event definition": "signalEventDefinition"
+    },
+    "Signal Intermediate Throw Event": {
+      "event type": "intermediateThrowEvent",
+      "event definition": "signalEventDefinition"
+    }
+  },
+  "task": {
+    "Business rule task type": "businessRuleTask",
+    "Manual task type": "manualTask",
+    "Receive task type": "receiveTask",
+    "Script task type": "scriptTask",
+    "Send task type": "sendTask",
+    "Service task type": "serviceTask",
+    "User task type": "userTask"
+  }
+}

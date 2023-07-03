@@ -1,24 +1,13 @@
-import xml.etree.ElementTree as ET
-import re
-import string
+import json
 import random
+import string
+import xml.etree.ElementTree as ET
 
 
 def get_random_string(length: int) -> str:
     letters = string.ascii_lowercase
-    result_str = ''.join(random.choice(letters) for i in range(length))
+    result_str = ''.join(random.choice(letters) for _ in range(length))
     return result_str
-
-
-def fix_bpmn_format(path: str):
-    with open(path, 'r') as file:
-        content = file.read()
-    # content = content.replace('ns0', 'bpmn')
-    # content = content.replace('ns1', 'bpmndi')
-    # content = content.replace('ns2', 'omgdc')
-    # content = content.replace('ns3', 'omgdi')
-    with open(path, 'w') as file:
-        file.write(content)
 
 
 def change_task_type(task, child_tag) -> str:
@@ -27,39 +16,35 @@ def change_task_type(task, child_tag) -> str:
     return '}'.join(tag_tokens)
 
 
-def replace_task_names(input_path: str, output_path: str, names_dict, task_type_dict):
-    print(names_dict)
-    print(task_type_dict)
+def replace_task_names(input_path: str, output_path: str, names_dict, obj_type_dict):
+    with open("data/bpmn_definitions.json") as f:
+        bpmn_definitions = json.load(f)
     tree = ET.parse(input_path)
     root = tree.getroot()
     for child in root:
         if child.tag.split('}')[1] == 'process':
             for process_child in child:
-                print(process_child)
                 if process_child.tag.split('}')[1] == 'task':
                     task_name = process_child.attrib['name'].strip()
                     new_name = names_dict[task_name]
-                    process_child.tag = change_task_type(task_type_dict[new_name], process_child.tag)
-                    process_child.attrib['name'] = new_name
-                elif re.search(r'\bEvent\b$', process_child.tag.split('}')[1]) is not None:
-                    event_name = process_child.attrib['name'].strip()
-                    if event_name in names_dict.keys():
-                        new_event_name = names_dict[event_name]
-                        task_type = task_type_dict[new_event_name]
-                        process_child.attrib['name'] = new_event_name
-                        if task_type in ['intermediateCatchEvent', 'intermediateThrowEvent', 'endEvent', 'startEvent']:
-                            process_child.tag = change_task_type(task_type, process_child.tag)
-                        else:
-                            have_event = 0
-                            for event_child in process_child:
-                                if re.search(r'\bEvent\b$', event_child.tag.split('}')[1]) is not None:
-                                    event_child.tag = change_task_type(task_type, event_child.tag)
-                                    have_event = 1
-                            if not have_event:
-                                el = ET.Element('}'.join([process_child.tag.split('}')[0], task_type]))
-                                rand_id = get_random_string(6)
-                                el.set('id', task_type + '_' + rand_id)
-                                process_child.append(el)
+                    obj_type = obj_type_dict[new_name]
+                    if obj_type in bpmn_definitions['event'].keys():
+                        # is Event
+                        process_child.tag = change_task_type(bpmn_definitions['event'][obj_type]['event type'],
+                                                             process_child.tag)
+                        process_child.attrib['name'] = new_name
+                        event_definition = bpmn_definitions['event'][obj_type]['event definition']
+                        el = ET.Element('}'.join([process_child.tag.split('}')[0], event_definition]))
+                        rand_id = get_random_string(6)
+                        el.set('id', event_definition + '_' + rand_id)
+                        process_child.append(el)
+                    elif obj_type in bpmn_definitions['task'].keys():
+                        # is Task
+                        process_child.tag = change_task_type(bpmn_definitions['task'][obj_type], process_child.tag)
+                        process_child.attrib['name'] = new_name
+                    else:
+                        # assume None event
+                        process_child.tag = change_task_type("IntermediateCatchEvent", process_child.tag)
+                        process_child.attrib['name'] = new_name
 
     tree.write(output_path)
-    # fix_bpmn_format(output_path)
