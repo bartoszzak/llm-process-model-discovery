@@ -10,13 +10,14 @@ def get_random_string(length: int) -> str:
     return result_str
 
 
-def change_task_type(task, child_tag) -> str:
+def change_task_type(task: str, child_tag: str) -> str:
     tag_tokens = child_tag.split('}')
     tag_tokens[1] = task
     return '}'.join(tag_tokens)
 
 
-def replace_task_names(input_path: str, output_path: str, names_dict, obj_type_dict):
+def replace_task_names(input_path: str, output_path: str, names_dict: dict[str, str],
+                       obj_type_dict: dict[str, dict[str, str | dict[str, str]]]) -> None:
     with open("data/bpmn_definitions.json") as f:
         bpmn_definitions = json.load(f)
     tree = ET.parse(input_path)
