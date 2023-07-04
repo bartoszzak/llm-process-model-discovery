@@ -11,10 +11,10 @@ def generate_rename_objects_prompt(names: list | str) -> str:
     return inspect.cleandoc(prompt)
 
 
-def generate_task_events_prompt(logs: list | str) -> str:
+def generate_task_events_prompt(names: list | str) -> str:
     prompt = f"""Decide whether given BPMN task/event is a task or an event.\
                 The list containing unique task/event names is below:
-                {logs}
+                {names}
                 return only one python dict containing \"name: event/task\" and no other output."""
     return inspect.cleandoc(prompt)
 
@@ -52,7 +52,7 @@ def generate_event_types_prompt(events: dict | str) -> str:
 
     event_types = event_types[:-1]
 
-    prompt = f"""Given that a BPMN model has events withe names given below:
+    prompt = f"""Given that a BPMN model has events with names given below:
                     {events}
                     Guess event types, knowing that the event types are:
                     {event_types}.
