@@ -41,7 +41,6 @@ if __name__ == '__main__':
     logger.info("Discovering model...")
     process_model = pm4py.discover_bpmn_inductive(logs)
     pm4py.write_bpmn(process_model, 'data/model')
-    process_model = pm4py.read_bpmn('data/model.bpmn')
     logger.info("Model discovery complete")
 
     # rename objects
